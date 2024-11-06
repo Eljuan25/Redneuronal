@@ -1,21 +1,19 @@
-import matplotlib.pyplot as plt
 import cv2
+import matplotlib.pyplot as plt
 
-def visualizar_resultados(model, test_images):
-    for img_path in test_images:
-        # Cargar la imagen
-        img = cv2.imread(img_path)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convertir de BGR a RGB para matplotlib
+def visualizar_resultados(modelo, img_path, puntos):
+    # Cargar la imagen
+    img = cv2.imread(img_path)
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        # Preprocesar la imagen para hacer la predicción
-        img_resized = cv2.resize(img, (64, 64))  # Ajustar el tamaño según el modelo
-        img_input = img_resized / 255.0  # Normalizar
-        img_input = img_input.reshape(1, 64, 64, 3)  # Asegurar la dimensión correcta
+    # Dibujar los puntos sobre la imagen
+    for punto in puntos:
+        x, y = punto["x"], punto["y"]
+        nombre_punto = punto["nombre_punto"]
+        cv2.circle(img_rgb, (x, y), 5, (255, 0, 0), -1)
+        cv2.putText(img_rgb, nombre_punto, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
 
-        # Realizar la predicción
-        prediccion = model.predict(img_input)
-
-        # Mostrar la imagen y el resultado de la predicción
-        plt.imshow(img)
-        plt.title(f"Predicción: {prediccion}")
-        plt.show()
+    # Mostrar la imagen con puntos
+    plt.imshow(img_rgb)
+    plt.axis('off')
+    plt.show()
